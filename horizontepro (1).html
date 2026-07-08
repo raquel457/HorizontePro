@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HorizontePro — Encuentra tu ruta universitaria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#1B2333;
+  --night-2:#242f45;
+  --paper:#F3ECDD;
+  --paper-dim:#e8dfc9;
+  --terracotta:#E2673D;
+  --gold:#D9A441;
+  --teal:#4FA391;
+  --line: rgba(243,236,221,0.14);
+  --line-strong: rgba(243,236,221,0.28);
+  --text-soft: rgba(243,236,221,0.68);
+  --text-faint: rgba(243,236,221,0.44);
+  --radius: 14px;
+  --display: 'Space Grotesk', sans-serif;
+  --body: 'Lora', serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+}
+html,body{
+  background: var(--night);
+  color: var(--paper);
+  font-family: var(--body);
+  min-height:100%;
+  overflow-x:hidden;
+}
+body{
+  background-image:
+    radial-gradient(circle at 15% 8%, rgba(217,164,65,0.10), transparent 40%),
+    radial-gradient(circle at 90% 85%, rgba(79,163,145,0.10), transparent 45%);
+}
+.app{max-width: 980px; margin:0 auto; padding: 28px 24px 80px;}
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 4px 0 36px;
+}
+.brand{
+  display:flex; align-items:center; gap:10px;
+  font-family: var(--display); font-weight:700; font-size:19px; letter-spacing:0.01em;
+}
+.brand-mark{width:26px; height:26px; flex-shrink:0;}
+.brand small{
+  display:block; font-family:var(--mono); font-weight:400; font-size:10px;
+  letter-spacing:0.14em; color: var(--text-faint); text-transform:uppercase; margin-top:2px;
+}
+.eyebrow{
+  font-family: var(--mono); font-size:11px; letter-spacing:0.16em; text-transform:uppercase;
+  color: var(--gold); margin-bottom:14px; display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{content:''; width:18px; height:1px; background: var(--gold);}
+
+/* ---------- Screens ---------- */
+.screen{display:none;}
+.screen.active{display:block; animation: fadein 0.5s ease both;}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* ---------- Hero / Intro ---------- */
+.hero{position:relative; padding: 18px 0 10px;}
+.hero-topo{position:absolute; inset:-40px -20px auto -20px; height:340px; z-index:0; opacity:0.5; pointer-events:none;}
+.hero-content{position:relative; z-index:1;}
+h1.display{
+  font-family: var(--display); font-weight:700; font-size: clamp(34px, 6vw, 58px);
+  line-height:1.04; letter-spacing:-0.01em; max-width: 760px;
+}
+h1.display em{
+  font-style:normal; color: var(--terracotta);
+  text-decoration: underline; text-decoration-color: var(--gold);
+  text-decoration-thickness: 3px; text-underline-offset: 6px;
+}
+.hero-sub{
+  font-size:17px; color: var(--text-soft); max-width:520px; margin-top:18px; line-height:1.6;
+}
+.hero-actions{display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; align-items:center;}
+.btn{
+  font-family: var(--display); font-weight:600; font-size:15px;
+  padding: 14px 26px; border-radius: 999px; border:none; cursor:pointer;
+  display:inline-flex; align-items:center; gap:10px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn:focus-visible{outline:2px solid var(--gold); outline-offset:3px;}
+.btn-primary{background: var(--terracotta); color: var(--paper);}
+.btn-primary:hover{transform: translateY(-2px); box-shadow: 0 10px 24px rgba(226,103,61,0.28);}
+.btn-ghost{background: transparent; color: var(--paper); border:1px solid var(--line-strong);}
+.btn-ghost:hover{border-color: var(--gold); color: var(--gold);}
+.btn-small{padding:9px 18px; font-size:13px;}
+
+.stat-row{display:flex; gap:34px; margin-top:56px; flex-wrap:wrap;}
+.stat{border-left:1px solid var(--line); padding-left:16px;}
+.stat b{font-family:var(--display); font-size:26px; display:block; color:var(--gold);}
+.stat span{font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.08em;}
+
+.how-it-works{margin-top:80px; display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+.how-card{
+  border:1px solid var(--line); border-radius: var(--radius); padding:22px;
+  background: rgba(243,236,221,0.03);
+}
+.how-num{font-family:var(--mono); color: var(--teal); font-size:12px; letter-spacing:0.1em;}
+.how-card h3{font-family:var(--display); font-size:17px; margin:10px 0 8px; font-weight:600;}
+.how-card p{font-size:14px; color:var(--text-soft); line-height:1.55;}
+
+@media (max-width: 720px){ .how-it-works{grid-template-columns:1fr;} .stat-row{gap:22px;} }
+
+/* ---------- Progress compass ---------- */
+.progress-wrap{display:flex; align-items:center; gap:16px; margin-bottom:34px;}
+.compass{width:44px; height:44px; flex-shrink:0;}
+.progress-track{flex:1; height:6px; border-radius:999px; background: rgba(243,236,221,0.1); position:relative; overflow:hidden;}
+.progress-fill{height:100%; background: linear-gradient(90deg, var(--gold), var(--terracotta)); border-radius:999px; transition: width 0.45s cubic-bezier(.4,0,.2,1); width:0%;}
+.progress-label{font-family:var(--mono); font-size:12px; color:var(--text-faint); white-space:nowrap;}
+
+/* ---------- Question card ---------- */
+.q-card{
+  border:1px solid var(--line); border-radius: 18px; padding:38px 34px;
+  background: rgba(243,236,221,0.03);
+  min-height: 260px; display:flex; flex-direction:column; justify-content:center;
+}
+.q-eyebrow{font-family:var(--mono); font-size:11px; color:var(--teal); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:14px;}
+.q-text{font-family:var(--display); font-size: clamp(21px,3vw,27px); font-weight:600; line-height:1.35; max-width:600px;}
+.scale{display:flex; gap:10px; margin-top:34px; flex-wrap:wrap;}
+.scale button{
+  flex:1; min-width:90px; padding:14px 8px; border-radius:10px; border:1px solid var(--line-strong);
+  background:transparent; color:var(--paper); font-family:var(--mono); font-size:12px; cursor:pointer;
+  transition: all 0.15s ease; text-align:center;
+}
+.scale button:hover{border-color: var(--gold); background: rgba(217,164,65,0.08);}
+.scale button.picked{background: var(--gold); color: var(--night); border-color: var(--gold); font-weight:600;}
+.q-nav{display:flex; justify-content:space-between; margin-top:26px;}
+
+/* ---------- Diagnostic ---------- */
+.diag-subject{
+  font-family:var(--mono); font-size:11px; color:var(--terracotta); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:6px;
+}
+
+/* ---------- Loading ---------- */
+.loading-screen{display:flex; flex-direction:column; align-items:center; justify-content:center; padding:120px 0; text-align:center;}
+.loading-compass{width:64px; height:64px; animation: spin 1.8s linear infinite; margin-bottom:24px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-text{font-family:var(--mono); font-size:13px; color:var(--text-faint);}
+
+/* ---------- Results ---------- */
+.results-hero{display:grid; grid-template-columns: 1.1fr 1fr; gap:40px; align-items:center; margin-bottom:56px;}
+@media (max-width: 780px){ .results-hero{grid-template-columns:1fr;} }
+.profile-code{font-family:var(--display); font-size:64px; font-weight:700; color:var(--gold); line-height:1;}
+.profile-name{font-family:var(--display); font-size:24px; margin-top:8px; font-weight:600;}
+.profile-desc{color:var(--text-soft); margin-top:14px; line-height:1.65; font-size:15px;}
+.radar-wrap{display:flex; justify-content:center;}
+
+.section-title{
+  font-family:var(--display); font-size:24px; font-weight:700; margin: 54px 0 6px;
+  display:flex; align-items:baseline; gap:10px;
+}
+.section-title .n{font-family:var(--mono); font-size:13px; color:var(--terracotta);}
+.section-sub{color:var(--text-faint); font-size:14px; margin-bottom:24px;}
+
+.career-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px;}
+.career-card{
+  border:1px solid var(--line); border-radius: var(--radius); padding:20px;
+  background: rgba(243,236,221,0.03); transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.career-card:hover{border-color: var(--teal); transform:translateY(-2px);}
+.career-card h4{font-family:var(--display); font-size:16px; font-weight:600; margin-bottom:8px;}
+.career-card p{font-size:13px; color:var(--text-soft); line-height:1.5;}
+.career-tag{
+  display:inline-block; font-family:var(--mono); font-size:10px; letter-spacing:0.06em;
+  color:var(--teal); background: rgba(79,163,145,0.12); padding:3px 8px; border-radius:6px; margin-top:10px;
+}
+
+.uni-list{display:flex; flex-direction:column; gap:10px;}
+.uni-row{
+  display:flex; justify-content:space-between; align-items:center; gap:16px;
+  border:1px solid var(--line); border-radius:10px; padding:14px 18px;
+  background: rgba(243,236,221,0.02);
+}
+.uni-row .name{font-family:var(--display); font-weight:600; font-size:14.5px;}
+.uni-row .meta{font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:3px;}
+.uni-badge{font-family:var(--mono); font-size:10px; color:var(--gold); border:1px solid var(--gold); padding:3px 9px; border-radius:999px; white-space:nowrap;}
+
+.scholar-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;}
+.scholar-card{
+  border:1px solid var(--line-strong); border-radius: var(--radius); padding:22px;
+  background: linear-gradient(160deg, rgba(226,103,61,0.08), rgba(217,164,65,0.03));
+}
+.scholar-card h4{font-family:var(--display); font-size:16px; margin-bottom:8px;}
+.scholar-card p{font-size:13px; color:var(--text-soft); line-height:1.55;}
+.scholar-card ul{margin:12px 0 0 18px; font-size:13px; color:var(--text-soft); line-height:1.7;}
+
+.plan-card{
+  border:1px solid var(--line); border-radius: var(--radius); padding:22px; margin-bottom:14px;
+  background: rgba(243,236,221,0.03);
+}
+.plan-card.weak{border-left:3px solid var(--terracotta);}
+.plan-card.ok{border-left:3px solid var(--teal);}
+.plan-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;}
+.plan-head h4{font-family:var(--display); font-size:16px; font-weight:600;}
+.plan-score{font-family:var(--mono); font-size:12px; color:var(--text-faint);}
+.plan-bar{height:5px; border-radius:999px; background:rgba(243,236,221,0.1); overflow:hidden; margin-bottom:12px;}
+.plan-bar-fill{height:100%; border-radius:999px;}
+.plan-card p{font-size:13.5px; color:var(--text-soft); line-height:1.6;}
+.res-chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+.res-chip{font-family:var(--mono); font-size:11px; background:rgba(243,236,221,0.06); padding:5px 10px; border-radius:6px; color:var(--text-soft);}
+
+.footer-actions{display:flex; gap:14px; justify-content:center; margin-top:64px; flex-wrap:wrap;}
+.disclaimer{
+  margin-top:48px; padding:16px 20px; border:1px dashed var(--line-strong); border-radius:12px;
+  font-size:12.5px; color:var(--text-faint); line-height:1.6;
+}
+
+/* ---------- Llaita assistant ---------- */
+.llaita-card{
+  border:1px solid var(--line-strong); border-radius:20px; overflow:hidden;
+  background: linear-gradient(160deg, rgba(79,163,145,0.08), rgba(217,164,65,0.03));
+}
+.llaita-header{
+  display:flex; align-items:center; gap:14px; padding:20px 22px; border-bottom:1px solid var(--line);
+}
+.llaita-avatar{width:42px; height:42px; flex-shrink:0;}
+.llaita-title{font-family:var(--display); font-weight:700; font-size:17px;}
+.llaita-sub{font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-top:2px;}
+.chat-window{
+  height: 380px; overflow-y:auto; padding:20px 22px; display:flex; flex-direction:column; gap:12px;
+}
+.msg{max-width:78%; padding:12px 15px; border-radius:14px; font-size:14px; line-height:1.55; white-space:pre-wrap;}
+.msg.assistant{
+  align-self:flex-start; background: rgba(243,236,221,0.06); border:1px solid var(--line);
+  border-bottom-left-radius:4px;
+}
+.msg.user{
+  align-self:flex-end; background: var(--terracotta); color: var(--paper);
+  border-bottom-right-radius:4px;
+}
+.msg.typing{align-self:flex-start; display:flex; gap:4px; padding:14px 16px;}
+.msg.typing span{width:6px; height:6px; border-radius:50%; background:var(--text-faint); animation: blink 1.2s infinite ease-in-out;}
+.msg.typing span:nth-child(2){animation-delay:0.2s;}
+.msg.typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes blink{0%,80%,100%{opacity:0.25;} 40%{opacity:1;}}
+.chat-suggestions{display:flex; gap:8px; flex-wrap:wrap; padding:0 22px 14px;}
+.sugg-chip{
+  font-family:var(--mono); font-size:11.5px; padding:7px 12px; border-radius:999px;
+  border:1px solid var(--line-strong); background:transparent; color:var(--text-soft); cursor:pointer;
+  transition: all 0.15s ease;
+}
+.sugg-chip:hover{border-color:var(--gold); color:var(--gold);}
+.chat-input-row{
+  display:flex; gap:10px; padding:16px 22px; border-top:1px solid var(--line);
+}
+.chat-input-row input{
+  flex:1; background: rgba(243,236,221,0.05); border:1px solid var(--line-strong); border-radius:999px;
+  padding:12px 18px; color:var(--paper); font-family:var(--body); font-size:14px;
+}
+.chat-input-row input:focus{outline:none; border-color:var(--gold);}
+.chat-send{
+  width:44px; height:44px; border-radius:50%; border:none; background:var(--gold); color:var(--night);
+  cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:16px; transition: transform 0.15s ease;
+}
+.chat-send:hover{transform: scale(1.06);}
+.chat-send:disabled{opacity:0.5; cursor:default; transform:none;}
+
+::selection{background: var(--gold); color: var(--night);}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12" fill="none" stroke="#D9A441" stroke-width="1.3"/><path d="M13 5 L15.2 12 L13 21 L10.8 12 Z" fill="#E2673D"/><circle cx="13" cy="13" r="1.6" fill="#F3ECDD"/></svg>
+      <div>HorizontePro<small>Eureka Perú · Orientación vocacional</small></div>
+    </div>
+    <button class="btn btn-ghost btn-small" id="restartBtn" style="display:none" onclick="goHome()">Empezar de nuevo</button>
+  </div>
+
+  <!-- ============ SCREEN: HOME ============ -->
+  <section class="screen active" id="screen-home">
+    <div class="hero">
+      <svg class="hero-topo" viewBox="0 0 900 340" preserveAspectRatio="none">
+        <g fill="none" stroke="#4FA391" stroke-opacity="0.35">
+          <path d="M-20 260 C 150 220, 250 300, 420 250 S 700 180, 920 230"/>
+          <path d="M-20 220 C 150 180, 250 260, 420 210 S 700 140, 920 190"/>
+          <path d="M-20 180 C 150 140, 250 220, 420 170 S 700 100, 920 150"/>
+        </g>
+      </svg>
+      <div class="hero-content">
+        <div class="eyebrow">Test vocacional · Universidades · Becas</div>
+        <h1 class="display">Encuentra <em>tu ruta</em><br>hacia la universidad correcta.</h1>
+        <p class="hero-sub">Un test vocacional, un diagnóstico de tus puntos a reforzar y una selección de universidades y becas en Perú — todo cruzado según tu propio perfil.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="startTest()">Empezar test vocacional →</button>
+          <button class="btn btn-ghost" onclick="scrollToHow()">Cómo funciona</button>
+        </div>
+        <div class="stat-row">
+          <div class="stat"><b>24</b><span>preguntas vocacionales</span></div>
+          <div class="stat"><b>6</b><span>áreas de interés (RIASEC)</span></div>
+          <div class="stat"><b>~8</b><span>minutos en total</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="how" class="how-it-works">
+      <div class="how-card">
+        <div class="how-num">PASO 1</div>
+        <h3>Test vocacional</h3>
+        <p>Respondes 24 afirmaciones sobre lo que disfrutas hacer. Se mide tu perfil según el modelo RIASEC, usado por universidades como Navarra o Galileo.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">PASO 2</div>
+        <h3>Diagnóstico de falencias</h3>
+        <p>Una autoevaluación corta de 5 áreas académicas para detectar qué reforzar antes de postular o rendir un examen de admisión.</p>
+      </div>
+      <div class="how-card">
+        <div class="how-num">PASO 3</div>
+        <h3>Tu ruta personalizada</h3>
+        <p>Carreras afines, universidades sugeridas, becas del Estado (Beca 18, Beca Perú) y un plan de estudio para tus puntos débiles.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: TEST ============ -->
+  <section class="screen" id="screen-test">
+    <div class="progress-wrap">
+      <svg class="compass" id="testCompass" viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="none" stroke="#D9A441" stroke-width="1.5"/><path d="M22 8 L25 22 L22 36 L19 22 Z" fill="#E2673D"/></svg>
+      <div class="progress-track"><div class="progress-fill" id="testProgressFill"></div></div>
+      <div class="progress-label" id="testProgressLabel">1 / 24</div>
+    </div>
+    <div class="q-card">
+      <div class="q-eyebrow" id="testEyebrow">Test vocacional</div>
+      <div class="q-text" id="testQuestionText">—</div>
+      <div class="scale" id="testScale"></div>
+    </div>
+    <div class="q-nav">
+      <button class="btn btn-ghost btn-small" id="testBackBtn" onclick="testBack()">← Anterior</button>
+      <span></span>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: DIAGNOSTIC ============ -->
+  <section class="screen" id="screen-diag">
+    <div class="progress-wrap">
+      <svg class="compass" viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="none" stroke="#4FA391" stroke-width="1.5"/><path d="M22 8 L25 22 L22 36 L19 22 Z" fill="#4FA391"/></svg>
+      <div class="progress-track"><div class="progress-fill" id="diagProgressFill" style="background:linear-gradient(90deg,#4FA391,#D9A441)"></div></div>
+      <div class="progress-label" id="diagProgressLabel">1 / 15</div>
+    </div>
+    <div class="q-card">
+      <div class="q-eyebrow" id="diagSubjectLabel">Autoevaluación académica</div>
+      <div class="q-text" id="diagQuestionText">—</div>
+      <div class="scale" id="diagScale"></div>
+    </div>
+    <div class="q-nav">
+      <button class="btn btn-ghost btn-small" id="diagBackBtn" onclick="diagBack()">← Anterior</button>
+      <span></span>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: LOADING ============ -->
+  <section class="screen" id="screen-loading">
+    <div class="loading-screen">
+      <svg class="loading-compass" viewBox="0 0 44 44"><circle cx="22" cy="22" r="20" fill="none" stroke="#D9A441" stroke-width="1.5"/><path d="M22 8 L25 22 L22 36 L19 22 Z" fill="#E2673D"/></svg>
+      <div class="loading-text">Trazando tu ruta…</div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: RESULTS ============ -->
+  <section class="screen" id="screen-results">
+    <div class="eyebrow">Tus resultados</div>
+    <div class="results-hero">
+      <div>
+        <div class="profile-code" id="resCode">—</div>
+        <div class="profile-name" id="resName">—</div>
+        <p class="profile-desc" id="resDesc">—</p>
+      </div>
+      <div class="radar-wrap" id="radarWrap"></div>
+    </div>
+
+    <div class="section-title"><span class="n">01</span> Carreras afines a tu perfil</div>
+    <div class="section-sub">Basado en tus dos áreas de interés más fuertes.</div>
+    <div class="career-grid" id="careerGrid"></div>
+
+    <div class="section-title"><span class="n">02</span> Universidades sugeridas</div>
+    <div class="section-sub">Ejemplos por área — revisa siempre la web oficial y el estado de licenciamiento SUNEDU antes de postular.</div>
+    <div class="uni-list" id="uniList"></div>
+
+    <div class="section-title"><span class="n">03</span> Becas y financiamiento</div>
+    <div class="section-sub">Opciones del Estado peruano vigentes para el año académico 2026.</div>
+    <div class="scholar-grid">
+      <div class="scholar-card">
+        <h4>Beca 18 — PRONABEC</h4>
+        <p>Beca integral para egresados de secundaria en situación de vulnerabilidad, con buen rendimiento académico.</p>
+        <ul>
+          <li>Cubre matrícula, pensión, manutención y una laptop (hasta S/ 2,159)</li>
+          <li>Puntaje extra por carreras de alta demanda (ingeniería, tecnología, salud, finanzas)</li>
+          <li>Puntaje extra por estudiar fuera de Lima o en universidad pública</li>
+          <li>Mínimo 30% de vacantes reservadas para universidades públicas</li>
+        </ul>
+      </div>
+      <div class="scholar-card">
+        <h4>Beca Perú — PRONABEC</h4>
+        <p>Para quienes ya cursan o cursaron estudios superiores y necesitan apoyo para culminar la carrera.</p>
+        <ul>
+          <li>Requiere secundaria completa (EBR o EBA)</li>
+          <li>No debe tener beca activa en otro programa PRONABEC</li>
+        </ul>
+      </div>
+      <div class="scholar-card">
+        <h4>Antes de postular</h4>
+        <p>Tres cosas que conviene resolver con anticipación:</p>
+        <ul>
+          <li>Trámite SISFOH en tu municipalidad (puede tardar semanas)</li>
+          <li>Constancia de orden de mérito / tercio superior en tu colegio</li>
+          <li>Revisar la lista de instituciones elegibles en pronabec.gob.pe</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-title"><span class="n">04</span> Tu plan de refuerzo</div>
+    <div class="section-sub">Según tu autoevaluación, así puedes priorizar tu estudio.</div>
+    <div id="planList"></div>
+
+    <div class="section-title"><span class="n">05</span> Llaita — tu asistente de refuerzo</div>
+    <div class="section-sub">Conversa con Llaita: ya conoce tu perfil vocacional y tus áreas a reforzar, y te hará preguntas para ayudarte a practicar.</div>
+
+    <div class="llaita-card">
+      <div class="llaita-header">
+        <svg class="llaita-avatar" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="21" fill="#243447"/>
+          <path d="M14 30 C14 18, 17 10, 22 10 C27 10, 30 18, 30 30" fill="none" stroke="#D9A441" stroke-width="2"/>
+          <ellipse cx="22" cy="12" rx="4.2" ry="5" fill="#E2673D"/>
+          <circle cx="18.5" cy="26" r="1.6" fill="#F3ECDD"/>
+          <circle cx="25.5" cy="26" r="1.6" fill="#F3ECDD"/>
+        </svg>
+        <div style="flex:1">
+          <div class="llaita-title">Llaita</div>
+          <div class="llaita-sub" id="llaitaStatus">conectando con tu perfil…</div>
+        </div>
+        <button class="btn btn-ghost btn-small" id="connectToggleBtn" onclick="toggleConnectedMode()">🔌 Modo offline</button>
+      </div>
+      <div class="chat-window" id="chatWindow"></div>
+      <div class="chat-suggestions" id="chatSuggestions"></div>
+      <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="Escríbele a Llaita…" onkeydown="if(event.key==='Enter') sendChat();">
+        <button class="chat-send" id="chatSendBtn" onclick="sendChat()">→</button>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      Esta plataforma es un prototipo educativo para la feria Eureka Perú. El test vocacional, el diagnóstico y Llaita son herramientas de auto-reflexión y práctica, no una evaluación psicológica, una tutoría certificada ni una garantía de admisión o de beca. Verifica siempre los requisitos y cronogramas oficiales en pronabec.gob.pe y en la web de cada universidad.
+    </div>
+
+    <div class="footer-actions">
+      <button class="btn btn-primary" onclick="goHome()">Volver a empezar</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+
+const RIASEC_QUESTIONS = [
+  {t:"Arreglar o construir cosas con tus manos (muebles, aparatos, circuitos)", a:"R"},
+  {t:"Trabajar al aire libre, con plantas, animales o maquinaria", a:"R"},
+  {t:"Resolver problemas prácticos usando herramientas o instrumentos", a:"R"},
+  {t:"Actividades físicas o deportivas exigentes", a:"R"},
+  {t:"Investigar por qué ocurren las cosas, hacer preguntas y buscar respuestas", a:"I"},
+  {t:"Resolver problemas de matemática o lógica complejos", a:"I"},
+  {t:"Leer sobre ciencia, tecnología o descubrimientos nuevos", a:"I"},
+  {t:"Analizar datos para encontrar patrones o explicaciones", a:"I"},
+  {t:"Dibujar, diseñar, escribir historias o componer música", a:"A"},
+  {t:"Expresar ideas de forma original, sin seguir un molde fijo", a:"A"},
+  {t:"Trabajar en proyectos donde no hay una única respuesta correcta", a:"A"},
+  {t:"Actuar, tocar un instrumento o crear contenido audiovisual", a:"A"},
+  {t:"Escuchar y ayudar a otras personas con sus problemas", a:"S"},
+  {t:"Enseñar o explicarle algo a alguien hasta que lo entienda", a:"S"},
+  {t:"Trabajar en equipo y coordinar con otras personas", a:"S"},
+  {t:"Participar en actividades de voluntariado o apoyo comunitario", a:"S"},
+  {t:"Liderar un grupo o proyecto y tomar decisiones", a:"E"},
+  {t:"Convencer a otros de una idea, producto o proyecto", a:"E"},
+  {t:"Iniciar tu propio negocio o emprendimiento", a:"E"},
+  {t:"Asumir riesgos calculados para lograr una meta ambiciosa", a:"E"},
+  {t:"Organizar información, archivos o números con mucho orden", a:"C"},
+  {t:"Seguir procedimientos claros y precisos paso a paso", a:"C"},
+  {t:"Llevar registros, cuentas o presupuestos detallados", a:"C"},
+  {t:"Trabajar con planillas, bases de datos o reportes", a:"C"}
+];
+
+const AREA_INFO = {
+  R:{name:"Realista", desc:"prefieres lo concreto, técnico y práctico antes que lo abstracto."},
+  I:{name:"Investigador", desc:"te mueve entender el porqué de las cosas y resolver problemas complejos."},
+  A:{name:"Artístico", desc:"valoras la originalidad, la expresión y crear algo propio."},
+  S:{name:"Social", desc:"te energiza ayudar, enseñar y trabajar con personas."},
+  E:{name:"Emprendedor", desc:"te atrae liderar, persuadir y construir proyectos propios."},
+  C:{name:"Convencional", desc:"te sientes cómodo con el orden, la precisión y la estructura."}
+};
+
+const CAREER_DATA = {
+  R:[
+    {n:"Ingeniería Civil", d:"Diseño y construcción de infraestructura: puentes, edificios, carreteras."},
+    {n:"Ingeniería Mecánica", d:"Diseño de máquinas, motores y sistemas industriales."},
+    {n:"Ingeniería Agronómica", d:"Producción agrícola, suelos y manejo de cultivos."},
+    {n:"Arquitectura", d:"Diseño de espacios y edificaciones, entre lo técnico y lo creativo."},
+    {n:"Medicina Veterinaria", d:"Salud animal, producción pecuaria y fauna silvestre."}
+  ],
+  I:[
+    {n:"Ingeniería de Sistemas / Software", d:"Desarrollo de programas, algoritmos y sistemas informáticos."},
+    {n:"Medicina Humana", d:"Diagnóstico, tratamiento y prevención de enfermedades."},
+    {n:"Biología / Biotecnología", d:"Estudio de organismos vivos y aplicaciones científicas."},
+    {n:"Ingeniería Industrial", d:"Optimización de procesos, producción y logística."},
+    {n:"Física / Ciencia de Datos", d:"Modelos, análisis cuantitativo y experimentación."}
+  ],
+  A:[
+    {n:"Diseño Gráfico / Digital", d:"Comunicación visual para marcas, productos y medios."},
+    {n:"Arquitectura", d:"Diseño de espacios donde forma y función se combinan."},
+    {n:"Comunicación Audiovisual", d:"Producción de cine, video y contenido digital."},
+    {n:"Arte / Bellas Artes", d:"Creación artística en distintos soportes y técnicas."},
+    {n:"Diseño de Modas / Industrial", d:"Diseño de productos y prendas con identidad propia."}
+  ],
+  S:[
+    {n:"Psicología", d:"Comprensión del comportamiento humano y apoyo emocional."},
+    {n:"Educación / Pedagogía", d:"Formación de niños, adolescentes o adultos."},
+    {n:"Enfermería / Obstetricia", d:"Cuidado directo de la salud de las personas."},
+    {n:"Trabajo Social", d:"Intervención social con comunidades vulnerables."},
+    {n:"Comunicación Social", d:"Gestión de información y vínculos entre personas e instituciones."}
+  ],
+  E:[
+    {n:"Administración de Empresas", d:"Gestión de organizaciones, equipos y recursos."},
+    {n:"Marketing / Negocios Internacionales", d:"Estrategia comercial y expansión de mercados."},
+    {n:"Derecho", d:"Argumentación, negociación y defensa de intereses."},
+    {n:"Economía", d:"Análisis de mercados, políticas y toma de decisiones."},
+    {n:"Ingeniería Comercial", d:"Combina gestión de negocios con pensamiento analítico."}
+  ],
+  C:[
+    {n:"Contabilidad", d:"Control financiero, tributación y auditoría."},
+    {n:"Administración Bancaria y Finanzas", d:"Gestión de recursos financieros e inversión."},
+    {n:"Economía", d:"Análisis estructurado de datos económicos."},
+    {n:"Ciencias Contables y Financieras", d:"Precisión y orden aplicados a la gestión empresarial."},
+    {n:"Gestión Pública", d:"Administración de recursos y procesos del Estado."}
+  ]
+};
+
+const UNI_DATA = {
+  R:[
+    {n:"Universidad Nacional de Ingeniería (UNI)", meta:"Lima · pública · ingenierías", badge:"Nacional"},
+    {n:"Universidad Nacional Agraria La Molina (UNALM)", meta:"Lima · pública · agronomía / veterinaria", badge:"Nacional"},
+    {n:"Universidad de Piura (UDEP)", meta:"Piura · privada · ingenierías", badge:"Regional"}
+  ],
+  I:[
+    {n:"Pontificia Universidad Católica del Perú (PUCP)", meta:"Lima · privada · ciencias e ingeniería", badge:"Nacional"},
+    {n:"Universidad Nacional Mayor de San Marcos (UNMSM)", meta:"Lima · pública · medicina / ciencias", badge:"Nacional"},
+    {n:"Universidad Peruana Cayetano Heredia (UPCH)", meta:"Lima · privada · ciencias de la salud", badge:"Nacional"}
+  ],
+  A:[
+    {n:"Pontificia Universidad Católica del Perú (PUCP)", meta:"Lima · privada · arte, diseño, arquitectura", badge:"Nacional"},
+    {n:"Universidad Peruana de Ciencias Aplicadas (UPC)", meta:"Lima · privada · diseño y comunicaciones", badge:"Nacional"},
+    {n:"Toulouse Lautrec", meta:"Lima · instituto · diseño y audiovisual", badge:"Instituto"}
+  ],
+  S:[
+    {n:"Universidad Nacional Mayor de San Marcos (UNMSM)", meta:"Lima · pública · psicología / educación", badge:"Nacional"},
+    {n:"Universidad Antonio Ruiz de Montoya", meta:"Lima · privada · ciencias sociales", badge:"Regional"},
+    {n:"Universidad San Ignacio de Loyola (USIL)", meta:"Lima · privada · educación / salud", badge:"Nacional"}
+  ],
+  E:[
+    {n:"Universidad del Pacífico", meta:"Lima · privada · negocios y economía", badge:"Nacional"},
+    {n:"ESAN", meta:"Lima · privada · administración y negocios", badge:"Nacional"},
+    {n:"Universidad Católica San Pablo (UCSP)", meta:"Arequipa · privada · negocios", badge:"Regional"}
+  ],
+  C:[
+    {n:"Universidad Nacional Mayor de San Marcos (UNMSM)", meta:"Lima · pública · contabilidad y finanzas", badge:"Nacional"},
+    {n:"Universidad del Pacífico", meta:"Lima · privada · economía y finanzas", badge:"Nacional"},
+    {n:"Universidad Nacional de San Agustín (UNSA)", meta:"Arequipa · pública · administración", badge:"Regional"}
+  ]
+};
+
+const DIAG_SUBJECTS = [
+  {key:"mat", label:"Matemática", color:"#E2673D", qs:[
+    "Puedo resolver ecuaciones y problemas de álgebra sin mucha dificultad",
+    "Entiendo bien temas de geometría y trigonometría",
+    "Me siento cómodo/a interpretando gráficos y datos numéricos"
+  ]},
+  {key:"lec", label:"Comprensión lectora", color:"#D9A441", qs:[
+    "Entiendo con facilidad textos largos o complejos",
+    "Puedo identificar la idea principal y las intenciones de un autor",
+    "Leo rápido y retengo bien lo que leo"
+  ]},
+  {key:"cie", label:"Ciencias", color:"#4FA391", qs:[
+    "Entiendo conceptos de física y química sin mucho esfuerzo",
+    "Puedo explicar procesos biológicos con mis propias palabras",
+    "Me resulta fácil aplicar el método científico a un problema"
+  ]},
+  {key:"ing", label:"Inglés", color:"#8AA6C9", qs:[
+    "Puedo leer y entender textos en inglés de nivel intermedio",
+    "Puedo mantener una conversación básica en inglés",
+    "Entiendo la gramática y estructura del idioma"
+  ]},
+  {key:"raz", label:"Razonamiento lógico", color:"#C77DD1", qs:[
+    "Resuelvo bien problemas de lógica y secuencias",
+    "Puedo detectar patrones o inconsistencias en un argumento",
+    "Me desenvuelvo bien en pruebas de razonamiento abstracto"
+  ]}
+];
+
+const STUDY_RESOURCES = {
+  mat:{tips:"Practica problemas de examen de admisión a diario, empezando por álgebra y geometría básica antes de pasar a trigonometría.", chips:["Khan Academy (es)","Bancos de preguntas PRONABEC","Academias pre-universitarias"]},
+  lec:{tips:"Lee un texto corto por día y resume la idea principal en una frase. Practica con textos de examen de admisión tipo PUCP/UNI.", chips:["Lecturas ICFES/Saber tipo","Podcasts educativos","Círculos de lectura"]},
+  cie:{tips:"Refuerza conceptos con experimentos simples o videos explicativos antes de memorizar fórmulas.", chips:["Khan Academy Ciencias","YouTube: canales de física/química","Guías MINEDU"]},
+  ing:{tips:"Practica 15 minutos diarios con apps de vocabulario y consume contenido en inglés con subtítulos.", chips:["Duolingo","Apps de vocabulario","Series con subtítulos en inglés"]},
+  raz:{tips:"Resuelve series de razonamiento lógico y verbal cronometradas para ganar velocidad y precisión.", chips:["Bancos de razonamiento lógico","Simulacros cronometrados","Juegos de lógica"]}
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let testIndex = 0;
+let testAnswers = new Array(RIASEC_QUESTIONS.length).fill(null);
+
+let diagFlat = [];
+DIAG_SUBJECTS.forEach(s => s.qs.forEach((q,i) => diagFlat.push({subject:s.key, text:q})));
+let diagIndex = 0;
+let diagAnswers = new Array(diagFlat.length).fill(null);
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('restartBtn').style.display = (id==='screen-home') ? 'none' : 'inline-flex';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function scrollToHow(){ document.getElementById('how').scrollIntoView({behavior:'smooth'}); }
+function goHome(){
+  testIndex = 0; testAnswers.fill(null);
+  diagIndex = 0; diagAnswers.fill(null);
+  showScreen('screen-home');
+}
+
+/* ============================================================
+   TEST FLOW
+   ============================================================ */
+function startTest(){
+  testIndex = 0;
+  showScreen('screen-test');
+  renderTestQuestion();
+}
+function renderTestQuestion(){
+  const q = RIASEC_QUESTIONS[testIndex];
+  document.getElementById('testQuestionText').textContent = q.t;
+  document.getElementById('testProgressLabel').textContent = (testIndex+1)+' / '+RIASEC_QUESTIONS.length;
+  document.getElementById('testProgressFill').style.width = Math.round(((testIndex)/RIASEC_QUESTIONS.length)*100)+'%';
+  document.getElementById('testCompass').style.transform = 'rotate('+(testIndex*15)+'deg)';
+  document.getElementById('testBackBtn').style.visibility = testIndex===0 ? 'hidden' : 'visible';
+
+  const scale = document.getElementById('testScale');
+  scale.innerHTML = '';
+  const labels = ['Nada','Poco','Algo','Bastante','Mucho'];
+  labels.forEach((lab,i)=>{
+    const val = i+1;
+    const btn = document.createElement('button');
+    btn.textContent = lab;
+    if(testAnswers[testIndex]===val) btn.classList.add('picked');
+    btn.onclick = () => { testAnswers[testIndex]=val; testNext(); };
+    scale.appendChild(btn);
+  });
+}
+function testNext(){
+  if(testIndex < RIASEC_QUESTIONS.length-1){
+    testIndex++;
+    renderTestQuestion();
+  } else {
+    document.getElementById('testProgressFill').style.width = '100%';
+    setTimeout(()=>{ diagIndex=0; showScreen('screen-diag'); renderDiagQuestion(); }, 350);
+  }
+}
+function testBack(){
+  if(testIndex>0){ testIndex--; renderTestQuestion(); }
+}
+
+/* ============================================================
+   DIAGNOSTIC FLOW
+   ============================================================ */
+function renderDiagQuestion(){
+  const item = diagFlat[diagIndex];
+  const subj = DIAG_SUBJECTS.find(s=>s.key===item.subject);
+  document.getElementById('diagSubjectLabel').textContent = subj.label;
+  document.getElementById('diagQuestionText').textContent = item.text;
+  document.getElementById('diagProgressLabel').textContent = (diagIndex+1)+' / '+diagFlat.length;
+  document.getElementById('diagProgressFill').style.width = Math.round((diagIndex/diagFlat.length)*100)+'%';
+  document.getElementById('diagBackBtn').style.visibility = diagIndex===0 ? 'hidden' : 'visible';
+
+  const scale = document.getElementById('diagScale');
+  scale.innerHTML = '';
+  const labels = ['Muy en desacuerdo','En desacuerdo','Neutral','De acuerdo','Muy de acuerdo'];
+  labels.forEach((lab,i)=>{
+    const val = i+1;
+    const btn = document.createElement('button');
+    btn.textContent = lab;
+    if(diagAnswers[diagIndex]===val) btn.classList.add('picked');
+    btn.onclick = () => { diagAnswers[diagIndex]=val; diagNext(); };
+    scale.appendChild(btn);
+  });
+}
+function diagNext(){
+  if(diagIndex < diagFlat.length-1){
+    diagIndex++;
+    renderDiagQuestion();
+  } else {
+    document.getElementById('diagProgressFill').style.width='100%';
+    showScreen('screen-loading');
+    setTimeout(computeAndShowResults, 900);
+  }
+}
+function diagBack(){
+  if(diagIndex>0){ diagIndex--; renderDiagQuestion(); }
+}
+
+/* ============================================================
+   RESULTS
+   ============================================================ */
+function computeAndShowResults(){
+  // RIASEC scores
+  const scores = {R:0,I:0,A:0,S:0,E:0,C:0};
+  const counts = {R:0,I:0,A:0,S:0,E:0,C:0};
+  RIASEC_QUESTIONS.forEach((q,i)=>{
+    const v = testAnswers[i] || 3;
+    scores[q.a]+=v; counts[q.a]++;
+  });
+  const avg = {};
+  Object.keys(scores).forEach(k => avg[k] = scores[k]/counts[k]);
+  const sorted = Object.keys(avg).sort((a,b)=>avg[b]-avg[a]);
+  const top1 = sorted[0], top2 = sorted[1];
+  const code = top1+top2;
+
+  document.getElementById('resCode').textContent = code;
+  document.getElementById('resName').textContent = AREA_INFO[top1].name + ' + ' + AREA_INFO[top2].name;
+  document.getElementById('resDesc').textContent =
+    'Tu perfil combina el área ' + AREA_INFO[top1].name + ' (' + AREA_INFO[top1].desc + ') con rasgos ' +
+    AREA_INFO[top2].name + ' (' + AREA_INFO[top2].desc + ')';
+
+  renderRadar(avg, sorted);
+
+  // careers: top1 primary + a couple from top2
+  const grid = document.getElementById('careerGrid');
+  grid.innerHTML = '';
+  const careers = [...CAREER_DATA[top1].slice(0,4), CAREER_DATA[top2][0]];
+  careers.forEach(c=>{
+    const div = document.createElement('div');
+    div.className='career-card';
+    div.innerHTML = `<h4>${c.n}</h4><p>${c.d}</p><span class="career-tag">Afinidad ${AREA_INFO[top1].name}</span>`;
+    grid.appendChild(div);
+  });
+
+  // universities
+  const uniList = document.getElementById('uniList');
+  uniList.innerHTML='';
+  UNI_DATA[top1].forEach(u=>{
+    const row = document.createElement('div');
+    row.className='uni-row';
+    row.innerHTML = `<div><div class="name">${u.n}</div><div class="meta">${u.meta}</div></div><span class="uni-badge">${u.badge}</span>`;
+    uniList.appendChild(row);
+  });
+
+  // study plan
+  const planList = document.getElementById('planList');
+  planList.innerHTML='';
+  const subjAverages = DIAG_SUBJECTS.map(s=>{
+    let sum=0;
+    diagFlat.forEach((item,i)=>{ if(item.subject===s.key) sum += (diagAnswers[i]||3); });
+    return {key:s.key, label:s.label, color:s.color, avg: sum/s.qs.length};
+  }).sort((a,b)=>a.avg-b.avg);
+
+  subjAverages.forEach(s=>{
+    const pct = Math.round((s.avg/5)*100);
+    const isWeak = s.avg <= 3;
+    const card = document.createElement('div');
+    card.className = 'plan-card ' + (isWeak ? 'weak':'ok');
+    const res = STUDY_RESOURCES[s.key];
+    card.innerHTML = `
+      <div class="plan-head"><h4>${s.label}</h4><span class="plan-score">${s.avg.toFixed(1)} / 5</span></div>
+      <div class="plan-bar"><div class="plan-bar-fill" style="width:${pct}%; background:${s.color}"></div></div>
+      <p>${isWeak ? '⚠ Prioridad de refuerzo — ' : '✓ Nivel sólido — '}${res.tips}</p>
+      <div class="res-chips">${res.chips.map(c=>`<span class="res-chip">${c}</span>`).join('')}</div>
+    `;
+    planList.appendChild(card);
+  });
+
+  showScreen('screen-results');
+  initLlaita(top1, top2, code, subjAverages);
+}
+
+/* ============================================================
+   LLAITA — asistente conversacional (híbrido: offline + conectado)
+   ============================================================ */
+let llaitaHistory = [];
+let llaitaSystemPrompt = '';
+let llaitaBusy = false;
+let connectedMode = false;
+let userApiKey = '';
+let llaitaProfile = null; // {top1, top2, code, weak:[keys], strong:[keys], subjAverages}
+let convState = { mode:'idle', subjectKey:null, qIndex:0 }; // for offline practice flow
+
+/* ---- Banco de preguntas de práctica offline ---- */
+const PRACTICE_BANK = {
+  mat:[
+    {q:"Resolvamos algo rápido: ¿cuánto es la solución de 2x + 6 = 14?", a:["4"], hint:"Resta 6 a ambos lados y luego divide entre 2.", exp:"2x + 6 = 14 → 2x = 8 → x = 4."},
+    {q:"Si un triángulo tiene ángulos de 50° y 60°, ¿cuánto mide el tercer ángulo?", a:["70","70°"], hint:"Los tres ángulos de un triángulo siempre suman 180°.", exp:"180 - 50 - 60 = 70°."},
+    {q:"¿Cuál es la pendiente de la recta y = 3x + 2?", a:["3"], hint:"En y = mx + b, la pendiente es el número que acompaña a la x.", exp:"La pendiente (m) es 3."}
+  ],
+  lec:[
+    {q:"Practiquemos lectura crítica: cuando lees un texto de opinión, ¿cuál dirías que es la diferencia entre la idea principal y un dato de apoyo? Cuéntamelo con tus palabras.", a:null, exp:"La idea principal es la postura central del autor; los datos de apoyo son ejemplos, cifras o citas que la sustentan. Un buen lector separa ambas cosas antes de opinar."},
+    {q:"Te doy un truco: en un párrafo, la idea principal casi siempre está en la primera o última oración. Ahora dime, ¿en qué tipo de textos te cuesta más identificarla: narrativos, argumentativos o científicos?", a:null, exp:"Bien, con esa info podemos enfocar tu práctica en ese tipo de texto específicamente."}
+  ],
+  cie:[
+    {q:"Rapidito: ¿cuál es la fórmula química del agua?", a:["h2o","H2O"], hint:"Dos átomos de un elemento y uno de otro.", exp:"H2O: dos átomos de hidrógeno y uno de oxígeno."},
+    {q:"¿Cómo se llama el proceso por el cual las plantas producen su alimento usando luz solar?", a:["fotosintesis","fotosíntesis"], hint:"Empieza con 'foto-'.", exp:"Fotosíntesis: las plantas convierten luz solar, agua y CO2 en glucosa y oxígeno."}
+  ],
+  ing:[
+    {q:"Let's practice: complete la oración → 'She ___ to school every day' (go / goes)", a:["goes"], hint:"Con he/she/it en presente simple, el verbo lleva 's'.", exp:"Correcto: 'goes', porque con 'she' el verbo en presente simple añade -s."},
+    {q:"Traduce al inglés: 'Estoy estudiando para el examen'", a:["i am studying for the exam","i'm studying for the exam"], hint:"Usa presente continuo: am/is/are + verbo-ing.", exp:"'I am studying for the exam' — presente continuo para una acción en curso."}
+  ],
+  raz:[
+    {q:"Secuencia rápida: 2, 4, 8, 16, ¿qué número sigue?", a:["32"], hint:"Cada número es el doble del anterior.", exp:"32 — la secuencia se duplica cada vez (x2)."},
+    {q:"Si todos los A son B, y todos los B son C, ¿podemos concluir que todos los A son C?", a:["si","sí","yes"], hint:"Piensa en un diagrama de círculos: A dentro de B, B dentro de C.", exp:"Sí — es una relación transitiva: A ⊂ B ⊂ C, entonces A ⊂ C."}
+  ]
+};
+
+const CAREER_INFO_LOOKUP = {}; // nombre -> descripción, para responder si preguntan por una carrera puntual
+Object.values(CAREER_DATA).forEach(list => list.forEach(c => CAREER_INFO_LOOKUP[c.n.toLowerCase()] = c.d));
+
+function initLlaita(top1, top2, code, subjAverages){
+  const weak = subjAverages.filter(s=>s.avg<=3);
+  const strong = subjAverages.filter(s=>s.avg>3);
+  llaitaProfile = {top1, top2, code, weak, strong, subjAverages};
+
+  llaitaSystemPrompt =
+    "Eres Llaita, un asistente de estudio peruano, cercano, motivador y directo, dentro de la plataforma 'HorizontePro' (proyecto de feria escolar Eureka Perú). " +
+    "Hablas en español peruano coloquial pero respetuoso, con mensajes cortos (2-5 líneas), como un chat, no como un ensayo. " +
+    "Ya conoces el perfil vocacional del estudiante: código RIASEC '" + code + "' (" + AREA_INFO[top1].name + " + " + AREA_INFO[top2].name + "). " +
+    "Sus áreas académicas más débiles según su autoevaluación son: " + (weak.length? weak.map(w=>w.label).join(', ') : 'ninguna en particular') + ". " +
+    "Sus áreas más fuertes son: " + (strong.length? strong.map(w=>w.label).join(', ') : 'ninguna destaca aún') + ". " +
+    "Tu trabajo es: 1) hacer preguntas más profundas para entender mejor sus intereses y dudas vocacionales, 2) proponerle preguntas de práctica cortas sobre sus áreas débiles y corregirlo con explicaciones breves, 3) ayudarlo a armar un plan concreto de estudio semana a semana si lo pide. " +
+    "Nunca inventes datos de universidades, becas o fechas que no te haya dado el usuario o el contexto de la plataforma; si no sabes algo con certeza, dilo y sugiere verificar en la fuente oficial. " +
+    "Empieza el chat saludando por su perfil y haciendo UNA sola pregunta abierta para profundizar (por ejemplo sobre qué le atrae de las carreras sugeridas, o por dónde quiere empezar a reforzar).";
+
+  llaitaHistory = [];
+  convState = {mode:'idle', subjectKey:null, qIndex:0};
+  document.getElementById('chatWindow').innerHTML = '';
+  document.getElementById('llaitaStatus').textContent = 'modo offline · conoce tu perfil ' + code;
+
+  const chips = [];
+  if(weak[0]) chips.push('Practiquemos ' + weak[0].label);
+  chips.push('Cuéntame más sobre mis carreras sugeridas');
+  chips.push('Ayúdame a armar un plan semanal');
+  renderSuggestions(chips);
+
+  // Mensaje de apertura (siempre offline, no gasta llamada a la API)
+  const openLine = offlineOpeningMessage();
+  appendMsg('assistant', openLine);
+  llaitaHistory.push({role:'assistant', content: openLine});
+}
+
+function renderSuggestions(chips){
+  const suggWrap = document.getElementById('chatSuggestions');
+  suggWrap.innerHTML = '';
+  chips.forEach(c=>{
+    const b = document.createElement('button');
+    b.className='sugg-chip'; b.textContent=c;
+    b.onclick = ()=>{ document.getElementById('chatInput').value = c; sendChat(); };
+    suggWrap.appendChild(b);
+  });
+}
+
+function appendMsg(role, text){
+  const win = document.getElementById('chatWindow');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role;
+  div.textContent = text;
+  win.appendChild(div);
+  win.scrollTop = win.scrollHeight;
+  return div;
+}
+function showTyping(){
+  const win = document.getElementById('chatWindow');
+  const div = document.createElement('div');
+  div.className = 'msg typing';
+  div.id = 'typingIndicator';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  win.appendChild(div);
+  win.scrollTop = win.scrollHeight;
+}
+function hideTyping(){
+  const t = document.getElementById('typingIndicator');
+  if(t) t.remove();
+}
+
+/* ---- Toggle modo conectado / offline ---- */
+function toggleConnectedMode(){
+  if(connectedMode){
+    connectedMode = false;
+    userApiKey = '';
+    document.getElementById('connectToggleBtn').textContent = '🔌 Modo offline';
+    document.getElementById('llaitaStatus').textContent = 'modo offline · conoce tu perfil ' + llaitaProfile.code;
+    appendMsg('assistant', 'Volví a modo offline. Sigo aquí para practicar contigo, sin necesitar internet 🦙');
+    return;
+  }
+  const key = window.prompt(
+    "Modo conectado (opcional)\n\nPega tu propia clave de API de Anthropic para que Llaita responda con IA real en vez de sus respuestas preprogramadas.\n\nEsta clave NO se guarda: solo vive en esta pestaña mientras la tengas abierta. Úsala solo en demos, nunca en una versión pública."
+  );
+  if(!key) return;
+  userApiKey = key.trim();
+  connectedMode = true;
+  document.getElementById('connectToggleBtn').textContent = '🟢 Modo conectado';
+  document.getElementById('llaitaStatus').textContent = 'modo conectado (IA real) · perfil ' + llaitaProfile.code;
+  appendMsg('assistant', '¡Conectado! Ahora estoy pensando con IA real en vez de mis respuestas preprogramadas. Sigamos donde quedamos 🙂');
+}
+
+/* ---- Envío de mensaje ---- */
+function sendChat(){
+  if(llaitaBusy) return;
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  appendMsg('user', text);
+  llaitaHistory.push({role:'user', content:text});
+
+  if(connectedMode && userApiKey){
+    callLlaitaAPI();
+  } else {
+    llaitaBusy = true;
+    document.getElementById('chatSendBtn').disabled = true;
+    showTyping();
+    setTimeout(()=>{
+      hideTyping();
+      const reply = offlineReply(text);
+      appendMsg('assistant', reply);
+      llaitaHistory.push({role:'assistant', content:reply});
+      llaitaBusy = false;
+      document.getElementById('chatSendBtn').disabled = false;
+    }, 500 + Math.random()*500);
+  }
+}
+
+/* ============================================================
+   MOTOR OFFLINE (sin internet, sin API)
+   ============================================================ */
+function normalize(s){
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+}
+function subjectKeyFromText(t){
+  const n = normalize(t);
+  const map = {mat:['matemat','algebra','geometria'], lec:['lectura','lectora','leer','comprension'], cie:['ciencia','fisica','quimica','biologia'], ing:['ingles','english'], raz:['razonamiento','logica','logico']};
+  for(const key in map){ if(map[key].some(w=>n.includes(w))) return key; }
+  return null;
+}
+function offlineOpeningMessage(){
+  const {top1, top2, weak} = llaitaProfile;
+  let msg = `¡Hola! 🦙 Soy Llaita. Vi que tu perfil es ${AREA_INFO[top1].name} + ${AREA_INFO[top2].name} — se nota que te gusta ${AREA_INFO[top1].desc}\n\n`;
+  if(weak.length){
+    msg += `También vi que ${weak[0].label} es donde podrías reforzar más. ¿Quieres que empecemos a practicar eso, o prefieres primero contarme qué es lo que más te llama la atención de las carreras que te sugerí?`;
+  } else {
+    msg += `Tu autoevaluación salió bastante pareja, ¡bien ahí! ¿Quieres que profundicemos en tus carreras sugeridas o prefieres practicar algo puntual?`;
+  }
+  return msg;
+}
+
+function offlineReply(userText){
+  const n = normalize(userText);
+
+  // ¿Está esperando respuesta a una pregunta de práctica?
+  if(convState.mode === 'practicing'){
+    const bank = PRACTICE_BANK[convState.subjectKey];
+    const current = bank[convState.qIndex];
+    let feedback = '';
+    if(current.a){
+      const correct = current.a.some(ans => n.includes(normalize(ans)));
+      feedback = correct
+        ? `¡Correcto! ✅ ${current.exp}\n\n`
+        : `Casi. 🤔 ${current.exp}\n\n`;
+    } else {
+      feedback = `Buen intento. ${current.exp}\n\n`;
+    }
+    const nextIndex = convState.qIndex + 1;
+    if(nextIndex < bank.length){
+      convState.qIndex = nextIndex;
+      return feedback + bank[nextIndex].q + (bank[nextIndex].hint ? '\n💡 ' + bank[nextIndex].hint : '');
+    } else {
+      const finishedSubj = DIAG_SUBJECTS.find(s=>s.key===convState.subjectKey);
+      convState = {mode:'idle', subjectKey:null, qIndex:0};
+      renderSuggestions(['Ayúdame a armar un plan semanal', 'Cuéntame más sobre mis carreras sugeridas', 'Practiquemos otra materia']);
+      return feedback + `¡Eso fue todo el set de práctica de ${finishedSubj.label}! Puedes pedirme practicar otra materia o armar tu plan semanal cuando quieras.`;
+    }
+  }
+
+  // ¿Pide practicar una materia?
+  if(n.includes('practic') || n.includes('reforzar') || n.includes('ejercicio')){
+    const key = subjectKeyFromText(n) || (llaitaProfile.weak[0] && llaitaProfile.weak[0].key);
+    if(key && PRACTICE_BANK[key]){
+      convState = {mode:'practicing', subjectKey:key, qIndex:0};
+      const subj = DIAG_SUBJECTS.find(s=>s.key===key);
+      const first = PRACTICE_BANK[key][0];
+      return `Vamos con ${subj.label} 💪\n\n${first.q}` + (first.hint ? '\n💡 ' + first.hint : '');
+    }
+    return `Puedo ayudarte a practicar: Matemática, Comprensión lectora, Ciencias, Inglés o Razonamiento lógico. ¿Cuál eliges?`;
+  }
+
+  // ¿Pide plan de estudio?
+  if(n.includes('plan') || n.includes('semana') || n.includes('cronograma')){
+    const weak = llaitaProfile.weak;
+    if(!weak.length){
+      return `Como tu autoevaluación salió pareja, te sugiero un plan de mantenimiento: 3 sesiones cortas por semana alternando entre tus 5 áreas, más simulacros completos cada 2 semanas.`;
+    }
+    let plan = `Aquí va un plan simple de 4 semanas priorizando tus áreas más débiles:\n\n`;
+    weak.forEach((w,i)=>{
+      plan += `Semana ${i+1}: enfócate en ${w.label} — 20-30 min diarios, ${STUDY_RESOURCES[w.key].chips[0]}.\n`;
+    });
+    plan += `\nDesde la semana ${weak.length+1}, alterna repaso de todas tus áreas con simulacros completos. ¿Quieres que ajustemos algo del plan?`;
+    return plan;
+  }
+
+  // ¿Pregunta por una carrera específica?
+  for(const name in CAREER_INFO_LOOKUP){
+    if(n.includes(normalize(name).split(' ')[0])){
+      return `${name}: ${CAREER_INFO_LOOKUP[name]} ¿Quieres que veamos qué universidades la ofrecen o prefieres seguir explorando otras opciones?`;
+    }
+  }
+
+  // Saludo / agradecimiento
+  if(n.includes('gracias')) return `¡De nada! 🦙 Aquí sigo cuando quieras seguir practicando o armando tu plan.`;
+  if(n.includes('hola')) return `¡Hola de nuevo! ¿Seguimos con la práctica o tienes alguna duda sobre tu perfil vocacional?`;
+
+  // Respuesta genérica que invita a profundizar
+  const generic = [
+    `Interesante lo que cuentas. ¿Eso tiene que ver más con lo que disfrutas hacer en tu día a día, o con lo que crees que "deberías" estudiar?`,
+    `Cuéntame un poco más — ¿en qué materia sientes que más te trabas cuando estudias?`,
+    `Ok, tomo nota. ¿Quieres que practiquemos algo puntual ahora o prefieres que armemos tu plan semanal?`
+  ];
+  return generic[Math.floor(Math.random()*generic.length)];
+}
+
+/* ============================================================
+   MOTOR CONECTADO (IA real, con clave propia del usuario)
+   ============================================================ */
+async function callLlaitaAPI(){
+  llaitaBusy = true;
+  document.getElementById('chatSendBtn').disabled = true;
+  showTyping();
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": userApiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 400,
+        system: llaitaSystemPrompt,
+        messages: llaitaHistory
+      })
+    });
+    const data = await response.json();
+    hideTyping();
+    let reply = '';
+    if(data && data.content){
+      reply = data.content.map(b => b.text || '').join('\n').trim();
+    } else if(data && data.error){
+      reply = 'Hubo un problema con la API: ' + (data.error.message || 'clave inválida o sin acceso.');
+    }
+    if(!reply) reply = 'Perdón, se me cruzaron las ideas 🦙 ¿me lo repites?';
+    appendMsg('assistant', reply);
+    llaitaHistory.push({role:'assistant', content:reply});
+  }catch(err){
+    hideTyping();
+    appendMsg('assistant', 'No pude conectarme a la API ahora. Puedes seguir en modo offline mientras tanto.');
+    console.error('Llaita API error:', err);
+  }finally{
+    llaitaBusy = false;
+    document.getElementById('chatSendBtn').disabled = false;
+  }
+}
+
+function renderRadar(avg, order){
+  const areas = ['R','I','A','S','E','C'];
+  const cx=140, cy=140, r=110;
+  const angleFor = i => (Math.PI*2*i/6) - Math.PI/2;
+  const maxVal = 5;
+
+  let gridPolys = '';
+  [0.25,0.5,0.75,1].forEach(f=>{
+    const pts = areas.map((a,i)=>{
+      const ang = angleFor(i);
+      const rad = r*f;
+      return (cx+rad*Math.cos(ang))+','+(cy+rad*Math.sin(ang));
+    }).join(' ');
+    gridPolys += `<polygon points="${pts}" fill="none" stroke="rgba(243,236,221,0.14)" stroke-width="1"/>`;
+  });
+
+  let axes = '';
+  let labels = '';
+  areas.forEach((a,i)=>{
+    const ang = angleFor(i);
+    const x2 = cx+r*Math.cos(ang), y2 = cy+r*Math.sin(ang);
+    axes += `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="rgba(243,236,221,0.14)" stroke-width="1"/>`;
+    const lx = cx+(r+22)*Math.cos(ang), ly = cy+(r+22)*Math.sin(ang);
+    labels += `<text x="${lx}" y="${ly}" fill="#F3ECDD" font-family="JetBrains Mono" font-size="11" text-anchor="middle" dominant-baseline="middle">${a}</text>`;
+  });
+
+  const dataPts = areas.map((a,i)=>{
+    const ang = angleFor(i);
+    const rad = r*(avg[a]/maxVal);
+    return (cx+rad*Math.cos(ang))+','+(cy+rad*Math.sin(ang));
+  }).join(' ');
+
+  const svg = `
+  <svg width="280" height="280" viewBox="0 0 280 280">
+    ${gridPolys}
+    ${axes}
+    <polygon points="${dataPts}" fill="rgba(226,103,61,0.28)" stroke="#E2673D" stroke-width="2"/>
+    ${labels}
+  </svg>`;
+  document.getElementById('radarWrap').innerHTML = svg;
+}
+</script>
+</body>
+</html>
